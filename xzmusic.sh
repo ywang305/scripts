@@ -12,10 +12,10 @@ function extracAudio() {
         --audio-quality 256 \
         --no-playlist \
         -i \
-        -o "~/Music/youtube-dl/%(title)s.%(ext)s" \
+        -o "~/Music/youtube-dl/%(playlist)s - %(artist)s/%(track)s.%(title)s.%(alt_title)s.%(ext)s" \
         --download-archive "~/Music/youtube-dl/Downloaded.txt" \
         --add-metadata \
-        --metadata-from-title "%(artist)s - %(title)s" \
+        --metadata-from-title "%(artist)s - %(title)s - %(alt_title)s" \
         $1
 
 }
