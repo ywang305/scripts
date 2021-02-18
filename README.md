@@ -8,5 +8,5 @@ workflow
 - resrouce in ~/Music/youtube-dl
 
 ## KAFKA, ECR
-[kafka](https://carbon.now.sh/UCDizeWhsbPEXfIydeYN)
-[ecr](https://carbon.now.sh/TAiBsVvtITAyioCBnIUY)
+- [kafka](https://carbon.now.sh/UCDizeWhsbPEXfIydeYN)
+- [ecr](https://carbon.now.sh/TAiBsVvtITAyioCBnIUY)
