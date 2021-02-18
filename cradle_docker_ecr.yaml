@@ -22,7 +22,7 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew clean && ./gradlew build
 
-    - run: docker build --tag exchange-market .    ## only name, no need tag
+    - run: docker build --tag my-image .    ## any name as long as matching local-image in next part, no need tag
     
     - name: Push to ECR
       id: ecr
@@ -31,5 +31,5 @@ jobs:
         access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         region: us-east-1
-        local-image: exchange-market ## built image
+        local-image: my-image ## built image
         image: exchange-market:dev-${{ github.sha }} # ecr repo name and tag
