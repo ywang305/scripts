@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  zoo1:
+    image: zookeeper
+    container_name: zoo1
+    ports:
+      - "2181:2181"
+  kafka1:
+    image: wurstmeister/kafka
+    container_name: kafka1
+    depends_on:
+      - zoo1
+    ports:
+      - "19092:19092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka1:9092,OUTSIDE://localhost:19092
+      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:19092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
