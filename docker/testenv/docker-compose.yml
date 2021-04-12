@@ -1,0 +1,205 @@
+version: "3"
+
+services:
+  zoo1:
+    image: zookeeper
+    container_name: zoo1
+    ports:
+      - "2181:2181"
+  kafka1:
+    image: wurstmeister/kafka
+    container_name: kafka1
+    depends_on:
+      - zoo1
+    ports:
+      - "19092:19092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka1:9092,OUTSIDE://test.ijycoin.com:19092
+      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:19092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+  redis:
+    image: redis
+    container_name: redis1
+    ports:
+      - "6379:6379"
+  mongo:
+    image: mongo
+    container_name: mongo1
+    ports:
+      - "27017:27017"
+    volumes:
+      - /opt/docker/mongo_data:/data/db
+  orders_mgr_api:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/orders-management-api:${TAG_EX_MGR_API}"
+    container_name: orders_mgr_api
+    env_file:
+      - orders_mgr_api.env
+    ports:
+      - 1337:1337
+
+  orders_match_engine:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/exchange-orders-match-engine:${TAG_EX_MATCH}"
+    container_name: orders_match_engine
+    ports:
+      - 8081:8081
+
+  market:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/exchange-market:${TAG_EX_MKT}"
+    container_name: market
+    ports:
+      - 8080:8080
+
+  orders_api:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/exchange-orders-api:${TAG_EX_ORDER_API}"
+    container_name: orders_api
+    ports:
+      - 8082:8082
+    depends_on:
+      - kafka1
+
+  cloud:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/cloud:latest"
+    container_name: cloud
+    ports:
+      - 7000:7000
+    volumes:
+      - /opt/conf/:/opt/conf/
+      - /opt/docker/logs:/tmp/logs
+
+  admin_backend:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/admin-backend:${TAG_ADMIN_BACKEND}"
+    container_name: admin_backend
+    ports:
+      - 6010:6010
+    volumes:
+      - /opt/conf/:/opt/conf/
+      - /opt/docker/logs:/tmp/logs
+
+  admin_web:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/admin-web:${TAG_ADMIN_WEB}"
+    container_name: admin_web
+    ports:
+      - 9576:8080
+
+  trading_vue:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/trading-vue:${TAG_TRADING_VUE}"
+    container_name: trading_vue
+    ports:
+      - 80:80
+
+  ucenter:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/ucenter:${TAG_UCENTER}"
+    container_name: ucenter
+    ports:
+      - 6001:6001
+    volumes:
+      - /opt/conf/:/opt/conf/
+      - /opt/docker/logs:/tmp/logs
+  service_wallet:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/service-wallet:latest"
+    container_name: service_wallet
+    ports:
+      - 6009:6009
+    volumes:
+      - /opt/conf/:/opt/conf/
+      - /opt/docker/logs:/tmp/logs
+  oauth_center:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/oauth-center:${TAG_OAUTH_CENTER}"
+    container_name: oauth_center
+    ports:
+      - 8090:8090
+
+  service_rpc_btc:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/service-rpc-btc:latest"
+    container_name: service_rpc_btc
+    ports:
+      - 7001:7001
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 500M
+    volumes:
+      - /opt/conf/:/opt/conf/
+      - /opt/docker/logs:/tmp/logs
+  service_rpc_eth:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/service-rpc-eth:latest"
+    container_name: service_rpc_eth
+    ports:
+      - 7003:7003
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 500M
+    volumes:
+      - /opt/conf/:/opt/conf/
+      - /opt/docker/logs:/tmp/logs
+  service_rpc_usdt:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/service-rpc-usdt:latest"
+    container_name: service_rpc_usdt
+    ports:
+      - 7004:7004
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 500M
+    volumes:
+      - /opt/conf/:/opt/conf/
+      - /opt/docker/logs:/tmp/logs
+  service_rpc_gsc:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/service-rpc-gsc:latest"
+    container_name: service_rpc_gsc
+    ports:
+      - 7013:7013
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 500M
+    volumes:
+      - /opt/conf/:/opt/conf/
+      - /opt/docker/logs:/tmp/logs
+  service_rpc_lsc:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/service-rpc-lsc:latest"
+    container_name: service_rpc_lsc
+    ports:
+      - 7014:7014
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 500M
+    volumes:
+      - /opt/conf/:/opt/conf/
+      - /opt/docker/logs:/tmp/logs
+  service_rpc_egb:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/service-rpc-egb:latest"
+    container_name: service_rpc_egb
+    ports:
+      - 7015:7015
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 500M
+    volumes:
+      - /opt/conf/:/opt/conf/
+      - /opt/docker/logs:/tmp/logs
+  service_rpc_ijb:
+    image: "145742810091.dkr.ecr.us-east-1.amazonaws.com/service-rpc-ijb:latest"
+    container_name: service_rpc_ijb
+    ports:
+      - 7016:7016
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 500M
+    volumes:
+      - /opt/conf/:/opt/conf/
+      - /opt/docker/logs:/tmp/logs
