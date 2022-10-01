@@ -5,7 +5,7 @@ workflow
 - brew install youtube-dl
 - brew install ffmpeg
 - ./xzmusic [URI]
-- resrouce in ~/Music/youtube-dl
+- resrouce in ~/Music/youtube-dl  or current_dir/youtube-dl
 
 ## KAFKA, ECR
 - [kafka](https://carbon.now.sh/UCDizeWhsbPEXfIydeYN)
