@@ -2,5 +2,6 @@
   "image": "mcr.microsoft.com/devcontainers/universal:2",
   "features": {
     "ghcr.io/meaningful-ooo/devcontainer-features/homebrew:2": {}
-  }
+  },
+  "postStartCommand": "brew install youtube-dl; brew install ffmpeg"
 }
